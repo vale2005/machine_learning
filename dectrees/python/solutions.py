@@ -75,14 +75,20 @@ def gen_validate_data(monkset, monktest, fraction):
     return validation_values
 
 def get_pruned(tree, validation_set):
+    number_of_prunes = 0
     best_tree = tree
-    best_check = 0
-    pruned_trees = d.allPruned(best_tree)
-    for t in pruned_trees:
-        curr_check = d.check(t, validation_set)
-        if curr_check > best_check:
-            best_check = curr_check
-            best_tree = t
+    better_than_original = True
+    best_check = d.check(best_tree, validation_set)
+    while better_than_original:
+        pruned_trees = d.allPruned(best_tree)
+        better_than_original = False
+        for t in pruned_trees:
+            curr_check = d.check(t, validation_set)
+            if curr_check > best_check:
+                number_of_prunes += 1
+                best_check = curr_check
+                better_than_original = True
+                best_tree = t
     return best_tree
 
 def drawPlots(mean_of_monks, var_of_monks):
@@ -95,7 +101,7 @@ def drawPlots(mean_of_monks, var_of_monks):
     plt.bar(x, var_of_monks[2], width=width, label='Monk3',tick_label = fractions,fc = 'b')
     plt.xlabel("Fraction")
     plt.ylabel("Variance of error")
-    plt.title("Variance of Error over 100 Iterations on Different Fractions ")
+    plt.title("Variance of Error over 1000 Iterations on Different Fractions ")
     plt.legend()  
     plt.show() 
 
